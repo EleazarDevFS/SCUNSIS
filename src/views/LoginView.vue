@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <form class="login" id="loginsc">
+  <form class="login" id="loginsc" @submit.prevent="login">
     <Logo />
     <input type="text" class="inputs-txt sub-log" placeholder="Usuario" />
     <input type="password" class="inputs-txt sub-log" placeholder="Contraseña" />
