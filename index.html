@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="public/img/image.png" />
+  <title>SCUNSIS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Fuente de Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *{
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-image: url("public/img/image.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /*Distorción de fondo  */
+    /* .background::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: rgba(100, 100, 100, 0.2);
+       z-index: 1;
+    }  */
+
+    /* Contenido encima */
+    .login {
+      width: max-content;
+      background-color: #F7F6F6be;
+      position: relative;
+      z-index: 2;
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      border-radius: 1em;
+      color: #000;
+      width: 100%;
+      max-width: 800px;
+      min-width: 400px;
+      height: auto;
+      gap: 10px;
+      /* overflow: hidden; */
+    }
+
+    .inputs-txt {
+      border-radius: 10px;
+      height: 40px;
+      position: relative;
+    }
+
+    .inputs-txt::placeholder{
+      color: #888;
+      font-style: normal;
+      font-size: 1.3em;
+      opacity: 1;
+      color: #000000e9;
+    }
+
+    .sub-log {
+      top: -3em;
+    }
+
+    .labels {
+      position: relative;
+    }
+
+    .submits {
+      height: 40px;
+      background-color: #7C0A02;
+      font-size: larger;
+      border-radius: 10px;
+      color: #fff;
+
+
+    }
+    #btns {
+      position: relative;
+      top: -1.2em;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
+
+</body>
+
+</html>
