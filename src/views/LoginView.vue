@@ -5,10 +5,19 @@ export default {
   components: {
     Logo
   },
+  mounted() {
+    // Aplicar imagen de fondo cuando entramos al login
+    document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed';
+    document.body.style.backgroundSize = 'cover';
+  },
   methods: {
     login() {
+
+      // Cambiar fondo del body
+      document.body.style.background = '#EBE7E7'; 
       // lógica de autenticación aquí...
       this.$router.push('/inicio');
+      
     }
   }
 }
