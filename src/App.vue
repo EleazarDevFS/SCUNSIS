@@ -17,6 +17,6 @@ import Logo from './components/Logo.vue';
   </form>
 </template>
 
-<style lang="scss">
-
+<style>
+  
 </style>
