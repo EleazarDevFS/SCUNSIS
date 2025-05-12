@@ -7,7 +7,7 @@
   
   <style scoped>
   #logo {
-    height: 20vh;
+    height: 10vh;
     text-align: center;
     color: #7C0A02;
     font-weight: 600;
@@ -16,8 +16,7 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    top: -35px;
-    /* overflow: ; */
+    top: -70px;
   }
   
   p{

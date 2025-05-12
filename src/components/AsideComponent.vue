@@ -35,12 +35,22 @@
   margin-top: 4px;
   display: inline-block;
 }
-#inicio-btn, .btns-aside{
-  margin-top: 40px;
+#inicio-btn{
+  margin-top: 30px;
   display: flex;
   align-items: center;   
   gap: 0.6rem;            
 }
+.btns-aside{
+    margin-top: 10px;
+  display: flex;
+  align-items: center;   
+  gap: 0.6rem; 
+}
+/* .btns-aside:active {
+  background: #7C0A02;
+  color: #fff;
+} */
 
 aside {
     display: flex;
@@ -48,6 +58,7 @@ aside {
     height: 100%;
     width: 100%;
     background-color: #D9D9D9;
+    /* padding-top: 20px; */
 }
 
 

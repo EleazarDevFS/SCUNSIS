@@ -10,7 +10,6 @@
             </svg>
         </div>
     </div>
-
 </template>
 <script>
 import Logo from '../components/Logo.vue';
