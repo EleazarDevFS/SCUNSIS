@@ -17,6 +17,7 @@
     align-items: center;
     position: relative;
     top: -35px;
+    /* overflow: ; */
   }
   
   p{

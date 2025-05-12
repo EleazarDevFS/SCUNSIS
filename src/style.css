@@ -57,12 +57,17 @@
     position: relative;
   }
 
-  .submits {
+  .submits{
     height: 40px;
     background-color: #7C0A02;
     font-size: larger;
     border-radius: 10px;
     color: #fff;
+  }
+  .shortcuts:hover{
+    /* background: #7C0A02; */
+    color: #7C0A02;
+    border: solid #7C0A0277;
   }
   #btns {
     position: relative;
