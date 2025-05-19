@@ -82,7 +82,6 @@ export default {
     color: #fff;
   }
   .shortcuts:hover{
-    /* background: #7C0A02; */
     color: #7C0A02;
     border: solid #7C0A0277;
   }

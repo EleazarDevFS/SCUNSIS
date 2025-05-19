@@ -2,11 +2,14 @@
 // Se importan los componentes AsideComponent y ActiveUser
 import AsideComponent from '../components/AsideComponent.vue';
 import ActiveUser from '../components/ActiveUser.vue';
+import NavigationGC from '../components/NavigationGC.vue'
+import { NavigationFailureType } from 'vue-router';
 export default {
     name: 'GenConsView',
     components: {
         AsideComponent,
-        ActiveUser
+        ActiveUser,
+        NavigationGC
     },
     mounted() {
         // Cada que se abra esta vista se ejecutarán las siguientes lineas de código
@@ -19,11 +22,13 @@ export default {
         <ActiveUser class="header" />
         <AsideComponent class="aside" />
         <main>
-            <h1><span>Generación de constancias</span></h1>
+            <NavigationGC/>
         </main>
     </div>
 </template>
 <style scoped>
+/* Estilos para contenido main */
+
 .Gen-Con-container {
     width: 100vw;
     height: 100vh;
@@ -36,10 +41,9 @@ main {
     flex: 1;
     width: 100%;
     height: 100%;
-    background-color: #EBE7E7;
+    background-color: #fff;
     gap: 20%;
     justify-content: center;
-    align-items: center;
 }
 
 .header {
