@@ -32,19 +32,19 @@ export default {
                 const whatBtn = boton.id;
                 switch (whatBtn) {
                     case "jornadas-btn":
-                        // alert(whatBtn)
+                        this.mostrarFormulario('form-jornadas');
                         break;
                     case "congresos-btn":
-                        // alert(whatBtn)
+                        this.mostrarFormulario('form-congresos');
                         break;
                     case "ponencias-btn":
-                        // alert(whatBtn)
+                        this.mostrarFormulario('form-ponencias');
                         break;
                     case "reconocimientos-btn":
-                        // alert(whatBtn)
+                        this.mostrarFormulario('form-reconocimientos');
                         break;
                     case "otros-btn":
-                        // alert(whatBtn)
+                        this.mostrarFormulario('form-otros');
                         break;
                     default:
                         alert('No existe el tipo de constancias solicitado.')
@@ -64,25 +64,30 @@ export default {
 
     },
     methods: {
+        mostrarFormulario(idFormulario) {
+            // Ocultar todos los formularios primero
+            const forms = document.querySelectorAll('.formulario');
+            forms.forEach((form) => {
+                form.style.display = 'none';
+            });
+            
+            // Mostrar el formulario seleccionado
+            const formularioSeleccionado = document.getElementById(idFormulario);
+            if (formularioSeleccionado) {
+                formularioSeleccionado.style.display = 'block';
+            }
+        },
+        
         botonesNavegacionGc() {
-            // Abrir formulario de jornadas
-            const formJornadas = document.getElementById('form-jornadas');
-            if (formJornadas) formJornadas.style.display = 'block';
-            // Abrir formulario de congresos
-            const formCongresos = document.getElementById('form-congresos');
-            if (formCongresos) formJornadas.style.display = 'block';
-            // Abrir formulario de ponencias
-            const formPonencias = document.getElementById('form-ponencias');
-            if (formPonencias) formJornadas.style.display = 'block';
-
-            // Abrir formulario de Reconocimientos
-            const formReconocimientos = document.getElementById('form-reconocimientos');
-            if (formReconocimientos) formJornadas.style.display = 'block';
-
-            // Abrir formulario Otros
-            const formOtros = document.getElementById('form-otros');
-            if (formOtros) formJornadas.style.display = 'block';
-
+            // Este método ya no es necesario ya que la lógica se movió al mounted()
+            // Se mantiene por compatibilidad pero no hace nada
+        },
+        
+        cerrarFormulario() {
+            const forms = document.querySelectorAll('.formulario');
+            forms.forEach((form) => {
+                form.style.display = 'none';
+            });
         }
     }
 
@@ -96,7 +101,7 @@ export default {
         <main>
             <!-- <NavigationGC /> -->
             <div class="select-event">
-                <button class="btn-button" id="jornadas-btn" @click="botonesNavegacionGc">
+                <button class="btn-button" id="jornadas-btn">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -107,8 +112,7 @@ export default {
                     </span>
                 </button>
 
-                <button id="congresos-btn" class="btn-button" @click="botonesNavegacionGc">
-
+                <button id="congresos-btn" class="btn-button">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -119,8 +123,7 @@ export default {
                     </span>
                 </button>
 
-                <button class="btn-button" id="ponencias-btn" @click="botonesNavegacionGc">
-
+                <button class="btn-button" id="ponencias-btn">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -131,8 +134,7 @@ export default {
                     </span>
                 </button>
 
-                <button class="btn-button" id="reconocimientos-btn" @click="botonesNavegacionGc">
-
+                <button class="btn-button" id="reconocimientos-btn">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -140,12 +142,10 @@ export default {
                                 d="M240-40v-329L110-580l185-300h370l185 300-130 211v329l-240-80-240 80Zm80-111 160-53 160 53v-129H320v129Zm20-649L204-580l136 220h280l136-220-136-220H340Zm98 383L296-558l57-57 85 85 169-170 57 56-226 227ZM320-280h320-320Z" />
                         </svg>
                         Reconocimientos
-
                     </span>
                 </button>
 
-                <button class="btn-button" id="otros-btn" @click="botonesNavegacionGc">
-
+                <button class="btn-button" id="otros-btn">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -156,6 +156,7 @@ export default {
                     </span>
                 </button>
             </div>
+            
             <!-- Formulario de jornadas acádemicas -->
             <form style="display: none;" class="formulario" id="form-jornadas">
                 <div class="title-form">
@@ -163,33 +164,34 @@ export default {
                 </div>
                 <hr>
                 <div class="grupo-formulario">
-                    <label for="numero">Número de constancias a generar</label>
-                    <input type="number" id="numero" class="campo-texto" placeholder="10" required>
+                    <label for="numero-jornadas">Número de constancias a generar</label>
+                    <input type="number" id="numero-jornadas" class="campo-texto" placeholder="10" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="hoja">Cargar hoja maestra</label>
-                    <input type="file" id="hoja" class="campo-archivo" required>
+                    <label for="hoja-jornadas">Cargar hoja maestra</label>
+                    <input type="file" id="hoja-jornadas" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="excel">Cargar excel con (Nombre, e-mail)</label>
-                    <input type="file" id="excel" class="campo-archivo" required>
+                    <label for="excel-jornadas">Cargar excel con (Nombre, e-mail)</label>
+                    <input type="file" id="excel-jornadas" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="fecha">Seleccionar fecha</label>
-                    <input type="date" id="fecha" class="campo-texto" required>
+                    <label for="fecha-jornadas">Seleccionar fecha</label>
+                    <input type="date" id="fecha-jornadas" class="campo-texto" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="mensaje">Message</label>
-                    <textarea id="mensaje" class="campo-textoarea"
+                    <label for="mensaje-jornadas">Mensaje</label>
+                    <textarea id="mensaje-jornadas" class="campo-textoarea"
                         placeholder="Por haber asistido a la conferencia X impartida por el/la (grado)(nombre)..."></textarea>
                 </div>
                 <button type="button" class="boton-cancelar" @click="cerrarFormulario">Cancelar</button>
                 <button type="submit" class="boton-enviar">Generar</button>
             </form>
+            
             <!-- Formulario de congresos -->
             <form style="display: none;" class="formulario" id="form-congresos">
                 <div class="title-form">
@@ -197,33 +199,34 @@ export default {
                 </div>
                 <hr>
                 <div class="grupo-formulario">
-                    <label for="numero">Número de constancias a generar</label>
-                    <input type="number" id="numero" class="campo-texto" placeholder="10" required>
+                    <label for="numero-congresos">Número de constancias a generar</label>
+                    <input type="number" id="numero-congresos" class="campo-texto" placeholder="10" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="hoja">Cargar hoja maestra</label>
-                    <input type="file" id="hoja" class="campo-archivo" required>
+                    <label for="hoja-congresos">Cargar hoja maestra</label>
+                    <input type="file" id="hoja-congresos" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="excel">Cargar excel con (Nombre, e-mail)</label>
-                    <input type="file" id="excel" class="campo-archivo" required>
+                    <label for="excel-congresos">Cargar excel con (Nombre, e-mail)</label>
+                    <input type="file" id="excel-congresos" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="fecha">Seleccionar fecha</label>
-                    <input type="date" id="fecha" class="campo-texto" required>
+                    <label for="fecha-congresos">Seleccionar fecha</label>
+                    <input type="date" id="fecha-congresos" class="campo-texto" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="mensaje">Message</label>
-                    <textarea id="mensaje" class="campo-textoarea"
+                    <label for="mensaje-congresos">Mensaje</label>
+                    <textarea id="mensaje-congresos" class="campo-textoarea"
                         placeholder="Por haber asistido a la conferencia X impartida por el/la (grado)(nombre)..."></textarea>
                 </div>
                 <button type="button" class="boton-cancelar" @click="cerrarFormulario">Cancelar</button>
                 <button type="submit" class="boton-enviar">Generar</button>
             </form>
+            
             <!-- Formulario para ponencias -->
             <form style="display: none;" class="formulario" id="form-ponencias">
                 <div class="title-form">
@@ -231,33 +234,34 @@ export default {
                 </div>
                 <hr>
                 <div class="grupo-formulario">
-                    <label for="numero">Número de constancias a generar</label>
-                    <input type="number" id="numero" class="campo-texto" placeholder="10" required>
+                    <label for="numero-ponencias">Número de constancias a generar</label>
+                    <input type="number" id="numero-ponencias" class="campo-texto" placeholder="10" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="hoja">Cargar hoja maestra</label>
-                    <input type="file" id="hoja" class="campo-archivo" required>
+                    <label for="hoja-ponencias">Cargar hoja maestra</label>
+                    <input type="file" id="hoja-ponencias" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="excel">Cargar excel con (Nombre, e-mail)</label>
-                    <input type="file" id="excel" class="campo-archivo" required>
+                    <label for="excel-ponencias">Cargar excel con (Nombre, e-mail)</label>
+                    <input type="file" id="excel-ponencias" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="fecha">Seleccionar fecha</label>
-                    <input type="date" id="fecha" class="campo-texto" required>
+                    <label for="fecha-ponencias">Seleccionar fecha</label>
+                    <input type="date" id="fecha-ponencias" class="campo-texto" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="mensaje">Message</label>
-                    <textarea id="mensaje" class="campo-textoarea"
+                    <label for="mensaje-ponencias">Mensaje</label>
+                    <textarea id="mensaje-ponencias" class="campo-textoarea"
                         placeholder="Por haber asistido a la conferencia X impartida por el/la (grado)(nombre)..."></textarea>
                 </div>
                 <button type="button" class="boton-cancelar" @click="cerrarFormulario">Cancelar</button>
                 <button type="submit" class="boton-enviar">Generar</button>
             </form>
+            
             <!-- Formulario de reconocimientos -->
             <form style="display: none;" class="formulario" id="form-reconocimientos">
                 <div class="title-form">
@@ -265,33 +269,34 @@ export default {
                 </div>
                 <hr>
                 <div class="grupo-formulario">
-                    <label for="numero">Número de constancias a generar</label>
-                    <input type="number" id="numero" class="campo-texto" placeholder="10" required>
+                    <label for="numero-reconocimientos">Número de constancias a generar</label>
+                    <input type="number" id="numero-reconocimientos" class="campo-texto" placeholder="10" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="hoja">Cargar hoja maestra</label>
-                    <input type="file" id="hoja" class="campo-archivo" required>
+                    <label for="hoja-reconocimientos">Cargar hoja maestra</label>
+                    <input type="file" id="hoja-reconocimientos" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="excel">Cargar excel con (Nombre, e-mail)</label>
-                    <input type="file" id="excel" class="campo-archivo" required>
+                    <label for="excel-reconocimientos">Cargar excel con (Nombre, e-mail)</label>
+                    <input type="file" id="excel-reconocimientos" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="fecha">Seleccionar fecha</label>
-                    <input type="date" id="fecha" class="campo-texto" required>
+                    <label for="fecha-reconocimientos">Seleccionar fecha</label>
+                    <input type="date" id="fecha-reconocimientos" class="campo-texto" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="mensaje">Message</label>
-                    <textarea id="mensaje" class="campo-textoarea"
+                    <label for="mensaje-reconocimientos">Mensaje</label>
+                    <textarea id="mensaje-reconocimientos" class="campo-textoarea"
                         placeholder="Por haber asistido a la conferencia X impartida por el/la (grado)(nombre)..."></textarea>
                 </div>
                 <button type="button" class="boton-cancelar" @click="cerrarFormulario">Cancelar</button>
                 <button type="submit" class="boton-enviar">Generar</button>
             </form>
+            
             <!-- Form Otros -->
             <form style="display: none;" class="formulario" id="form-otros">
                 <div class="title-form">
@@ -299,28 +304,28 @@ export default {
                 </div>
                 <hr>
                 <div class="grupo-formulario">
-                    <label for="numero">Número de constancias a generar</label>
-                    <input type="number" id="numero" class="campo-texto" placeholder="10" required>
+                    <label for="numero-otros">Número de constancias a generar</label>
+                    <input type="number" id="numero-otros" class="campo-texto" placeholder="10" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="hoja">Cargar hoja maestra</label>
-                    <input type="file" id="hoja" class="campo-archivo" required>
+                    <label for="hoja-otros">Cargar hoja maestra</label>
+                    <input type="file" id="hoja-otros" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="excel">Cargar excel con (Nombre, e-mail)</label>
-                    <input type="file" id="excel" class="campo-archivo" required>
+                    <label for="excel-otros">Cargar excel con (Nombre, e-mail)</label>
+                    <input type="file" id="excel-otros" class="campo-archivo" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="fecha">Seleccionar fecha</label>
-                    <input type="date" id="fecha" class="campo-texto" required>
+                    <label for="fecha-otros">Seleccionar fecha</label>
+                    <input type="date" id="fecha-otros" class="campo-texto" required>
                 </div>
 
                 <div class="grupo-formulario">
-                    <label for="mensaje">Message</label>
-                    <textarea id="mensaje" class="campo-textoarea"
+                    <label for="mensaje-otros">Mensaje</label>
+                    <textarea id="mensaje-otros" class="campo-textoarea"
                         placeholder="Por haber asistido a la conferencia X impartida por el/la (grado)(nombre)..."></textarea>
                 </div>
                 <button type="button" class="boton-cancelar" @click="cerrarFormulario">Cancelar</button>
@@ -329,6 +334,7 @@ export default {
         </main>
     </div>
 </template>
+
 <style scoped>
 /* Estilos para contenido main y contenedor principal*/
 
@@ -340,11 +346,9 @@ export default {
 }
 
 main {
-
     width: calc(100% - 200px);
     height: calc(100vh - 130px);
     overflow-y: auto;
-
 }
 
 .header {
@@ -374,6 +378,7 @@ main {
     width: 20%;
     border: solid 2px rgba(0, 0, 0, .1);
     padding: 5px;
+    cursor: pointer;
 }
 
 .btn-button span {
@@ -405,7 +410,7 @@ main {
 }
 
 .grupo-formulario label {
-    display: none;
+    display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
