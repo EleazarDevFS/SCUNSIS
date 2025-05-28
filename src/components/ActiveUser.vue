@@ -10,6 +10,10 @@ export default {
         logoUnsis.addEventListener('click', ()=>{
             this.$router.push('/inicio');
         })
+
+        //componentes independientes (computers), referencias, composicion API, iconifay
+        //Imports, propiedades, emit,const mounted, watch funciones,( usar: vuetify ): apartado de componentes
+
     }
 }
 </script>
