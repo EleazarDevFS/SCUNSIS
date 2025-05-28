@@ -1,57 +1,48 @@
 <script>
 import ActiveUser from '../components/ActiveUser.vue';
 import AsideComponent from '../components/AsideComponent.vue';
-import MyFormComponent from '../components/MyFormComponent.vue'; // Import MyForm
 
-export default {
-    name: 'ConfiguracionView',
-    components: {
-        AsideComponent,
-        ActiveUser,
-        MyFormComponent
-    }
+export default{
+name: 'ConfiguracionView',
+components:{
+    AsideComponent,
+    ActiveUser
+}
 }
 </script>
 <template>
     <div class="configuracion-container">
-        <ActiveUser class="header" />
+        <ActiveUser class="header"/>
         <AsideComponent class="aside" />
         <main>
-            <MyFormComponent
-  titulo="Formulario de jornadas académicas"
-  mensajePlaceholder="Por haber asistido a la conferencia X impartida por el/la (grado)(nombre)..."
-/>
-
-<MyFormComponent
-  titulo="Formulario otros eventos"
-  mensajePlaceholder="Por haber participado en el evento Y realizado el día..."
-/>
-
+            <h1>Configuración</h1>
         </main>
     </div>
 
 
 </template>
 <style scoped>
-.configuracion-container {
+.configuracion-container{
+display: flex;
+flex-wrap: wrap;
+width: 100vw;
+height: 100vh;
+}
+main{
     display: flex;
-    flex-wrap: wrap;
-    width: 100vw;
-    height: 100vh;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #EBE7E7;
+    gap: 15%;
+    padding: 5%;
+    justify-content: center;
+    align-items: center;
 }
-
-main {
-    width: calc(100% - 200px);
-    height: calc(100% - 100px);
-    overflow-y: auto;
-    background-color: #D9D9D9;
-}
-
-.header {
+.header{
     width: 100%;
 }
-
-.aside {
+.aside{
     width: 200px;
     height: 100vh;
 }
