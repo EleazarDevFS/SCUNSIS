@@ -1,48 +1,50 @@
 <script>
 import ActiveUser from '../components/ActiveUser.vue';
 import AsideComponent from '../components/AsideComponent.vue';
+import MyForm from '../components/MyForm.vue';
 
-export default{
-name: 'ConfiguracionView',
-components:{
-    AsideComponent,
-    ActiveUser
-}
+export default {
+    name: 'ConfiguracionView',
+    components: {
+        AsideComponent,
+        ActiveUser,
+        MyForm
+    },
+    mounted(){
+        document.body.style.background = "#EBE7E7"
+    }
 }
 </script>
 <template>
     <div class="configuracion-container">
-        <ActiveUser class="header"/>
+        <ActiveUser class="header" />
         <AsideComponent class="aside" />
         <main>
-            <h1>Configuración</h1>
+            <h5>configuracion</h5>
         </main>
     </div>
 
 
 </template>
 <style scoped>
-.configuracion-container{
-display: flex;
-flex-wrap: wrap;
-width: 100vw;
-height: 100vh;
-}
-main{
+.configuracion-container {
     display: flex;
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    background-color: #EBE7E7;
-    gap: 15%;
-    padding: 5%;
-    justify-content: center;
-    align-items: center;
+    flex-wrap: wrap;
+    width: 100vw;
+    height: 100vh;
 }
-.header{
+
+main {
+    width: calc(100% - 200px);
+    height: calc(100% - 100px);
+    overflow-y: auto;
+}
+
+.header {
     width: 100%;
 }
-.aside{
+
+.aside {
     width: 200px;
     height: 100vh;
 }
