@@ -1,8 +1,8 @@
 <script>
+import { ref } from 'vue';
 import AsideComponent from '../components/AsideComponent.vue';
 import ActiveUser from '../components/ActiveUser.vue';
 import NavigationGC from '../components/NavigationGC.vue';
-import { NavigationFailureType } from 'vue-router';
 import MyForm from '../components/MyForm.vue';
 
 export default {
@@ -13,88 +13,35 @@ export default {
         NavigationGC,
         MyForm
     },
+    setup() {
+        const mostrarFormularioId = ref('');
+        const nombreConstanciaOtro = ref('');
+        const otroValue = ref('')
+
+        const mostrarFormulario = (idFormulario) => {
+            mostrarFormularioId.value = idFormulario;
+        };
+
+
+        const cancelarFormulario = () => {
+            mostrarFormularioId.value = '';
+            nombreConstanciaOtro.value = '';
+        };
+
+        return {
+            mostrarFormularioId,
+            nombreConstanciaOtro,
+            mostrarFormulario,
+            cancelarFormulario,
+            otroValue
+        };
+    },
     mounted() {
         document.body.style.background = "#EBE7E7";
-        //Botones NavegacionGC
-        const btns = document.querySelectorAll('.btn-button');
-        //FormulariosGC
-        const forms = document.querySelectorAll('.forms-gc');
-        btns.forEach((boton) => {
-            const estilos = getComputedStyle(boton);
-            boton.dataset.originalColor = estilos.backgroundColor;
-        });
-        //Color a los botones
-        btns.forEach((boton) => {
-            boton.addEventListener('click', () => {
-                btns.forEach((b) => {
-                    b.style.backgroundColor = b.dataset.originalColor;
-                });
-                boton.style.backgroundColor = '#f5f5f5';
-                //Que boton es
-                const whatBtn = boton.id;
-                switch (whatBtn) {
-                    case "jornadas-btn":
-                        this.mostrarFormulario('form-jornadas');
-                        break;
-                    case "congresos-btn":
-                        this.mostrarFormulario('form-congresos');
-                        break;
-                    case "ponencias-btn":
-                        this.mostrarFormulario('form-ponencias');
-                        break;
-                    case "reconocimientos-btn":
-                        this.mostrarFormulario('form-reconocimientos');
-                        break;
-                    case "otros-btn":
-                        this.mostrarFormulario('form-otros');
-                        break;
-                    default:
-                        alert('No existe el tipo de constancias solicitado.')
-                }
-            });
-        });
-        //Botón cancelar formulario
-        const cancelBtns = document.querySelectorAll('.boton-cancelar');
-        cancelBtns.forEach((cancelBtn) => {
-            cancelBtn.addEventListener('click', () => {
-                const forms = document.querySelectorAll('.formulario');
-                forms.forEach((form) => {
-                    form.style.display = 'none';
-                })
-            })
-        })
-
-    },
-    methods: {
-        mostrarFormulario(idFormulario) {
-            // Ocultar todos los formularios primero
-            const forms = document.querySelectorAll('.formulario');
-            forms.forEach((form) => {
-                form.style.display = 'none';
-            });
-            
-            // Mostrar el formulario seleccionado
-            const formularioSeleccionado = document.getElementById(idFormulario);
-            if (formularioSeleccionado) {
-                formularioSeleccionado.style.display = 'block';
-            }
-        },
-        
-        botonesNavegacionGc() {
-            // Este método ya no es necesario ya que la lógica se movió al mounted()
-            // Se mantiene por compatibilidad pero no hace nada
-        },
-        
-        cerrarFormulario() {
-            const forms = document.querySelectorAll('.formulario');
-            forms.forEach((form) => {
-                form.style.display = 'none';
-            });
-        }
     }
-
-}
+};
 </script>
+
 
 <template>
     <div class="Gen-Con-container">
@@ -103,7 +50,7 @@ export default {
         <main>
             <!-- <NavigationGC /> -->
             <div class="select-event">
-                <button class="btn-button" id="jornadas-btn">
+                <button class="btn-button" id="jornadas-btn" @click="mostrarFormulario('form-jornadas')">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -114,7 +61,7 @@ export default {
                     </span>
                 </button>
 
-                <button id="congresos-btn" class="btn-button">
+                <button id="congresos-btn" class="btn-button" @click="mostrarFormulario('form-congresos')">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -125,7 +72,7 @@ export default {
                     </span>
                 </button>
 
-                <button class="btn-button" id="ponencias-btn">
+                <button class="btn-button" id="ponencias-btn" @click="mostrarFormulario('form-ponencias')">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -136,7 +83,7 @@ export default {
                     </span>
                 </button>
 
-                <button class="btn-button" id="reconocimientos-btn">
+                <button class="btn-button" id="reconocimientos-btn" @click="mostrarFormulario('form-reconocimientos')">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -147,7 +94,7 @@ export default {
                     </span>
                 </button>
 
-                <button class="btn-button" id="otros-btn">
+                <button class="btn-button" id="otros-btn" @click="mostrarFormulario('form-otros')">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="currentColor">
@@ -158,17 +105,24 @@ export default {
                     </span>
                 </button>
             </div>
-            <!-- Formulario jornadas acádemicas -->
-            <MyForm titulo="Jornadas acádemicas" mensajePlaceholder= "Por haber asistido a la Jornada acádemica X..." id="form-jornadas" style="display: none;"/>
-            <!-- Formulario de congresos -->
-            <MyForm titulo="Jornadas congresos" mensajePlaceholder= "Por haber asistido al congreso X..." id="form-congresos" style="display: none;"/>
-            <!-- Formulario de ponencias -->
-            <MyForm titulo="Jornadas ponencias" mensajePlaceholder= "Por haber sido ponente en X evento..." id="form-ponencias" style="display: none;"/>
-            <!-- formulario de reconocimientos -->
-            <MyForm titulo="Jornadas reconocimientos" mensajePlaceholder= "Se le otorga el siguiente reconocmiento por X..." id="form-reconocimientos" style="display: none;"/>
+            <MyForm v-if="mostrarFormularioId === 'form-jornadas'" titulo="Jornadas académicas"
+                mensajePlaceholder="Por haber asistido a la Jornada académica X..." />
+            <MyForm v-if="mostrarFormularioId === 'form-congresos'" titulo="Congresos"
+                mensajePlaceholder="Por haber asistido al congreso X..." />
+            <MyForm v-if="mostrarFormularioId === 'form-ponencias'" titulo="Ponencias"
+                mensajePlaceholder="Por haber sido ponente en X evento..." />
+            <MyForm v-if="mostrarFormularioId === 'form-reconocimientos'" titulo="Reconocimientos"
+                mensajePlaceholder="Se le otorga el siguiente reconocimiento por X..." />
             <!-- formulario otros -->
-            <MyForm titulo="Jornadas reconocimientos" mensajePlaceholder= "Se le otorga el siguiente constancia X por X razon..." id="form-otros" style="display: none;"/>
-
+            <div id="otros-container" v-if="mostrarFormularioId === 'form-otros'">
+                <div class="name-evento">
+                <label for="otros">Tipo de evento: </label>
+                <input id="input-others" v-model="nombreConstanciaOtro" type="text"
+                    placeholder="Nombre del evento" name="otros" />
+                    </div>
+                <MyForm v-if="nombreConstanciaOtro" :titulo="nombreConstanciaOtro" :value="otroValue"
+                    mensajePlaceholder="Se le otorga la siguiente constancia X por X razón..." />
+            </div>
         </main>
     </div>
 </template>
@@ -185,7 +139,7 @@ export default {
 
 main {
     width: calc(100% - 200px);
-    height: calc(100vh - 130px);
+    height: calc(100vh - 100px);
     overflow-y: auto;
 }
 
@@ -234,7 +188,7 @@ main {
 .formulario {
     display: flex;
     flex-direction: column;
-    max-width: 80%;
+    max-width: 90%;
     height: max-content;
     margin: 5px auto;
     padding: 10px;
@@ -314,4 +268,18 @@ main {
     display: flex;
     justify-content: center;
 }
+
+/* Formulario otros */
+#otros-container{
+    width: 100%;
+    gap: 10px;
+    margin: 10px;
+}
+.name-evento{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    
+}
+
 </style>

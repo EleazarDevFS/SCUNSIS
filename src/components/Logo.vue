@@ -1,7 +1,7 @@
 <template>
     <div id="logo">
       <img src="/public/img/image copy.png" alt="Logo" />
-      <p>SCUNSIS</p>   
+      <p>SC-UNSIS</p>   
     </div>
   </template>
   

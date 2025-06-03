@@ -2,14 +2,16 @@
 import ActiveUser from '../components/ActiveUser.vue';
 import AsideComponent from '../components/AsideComponent.vue';
 import MyForm from '../components/MyForm.vue';
+import EditPaperMaster from '../components/EditPaperMaster.vue';
+
 
 export default {
     name: 'ConfiguracionView',
     components: {
         AsideComponent,
         ActiveUser,
-        MyForm
-    },
+        MyForm,EditPaperMaster
+        },
     mounted(){
         document.body.style.background = "#EBE7E7"
     }
@@ -20,8 +22,12 @@ export default {
         <ActiveUser class="header" />
         <AsideComponent class="aside" />
         <main>
-            <h5>configuracion</h5>
+             <EditPaperMaster></EditPaperMaster>
+            <button >
+                Hola
+            </button>
         </main>
+
     </div>
 
 

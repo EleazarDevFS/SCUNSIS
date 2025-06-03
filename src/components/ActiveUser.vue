@@ -47,7 +47,7 @@ export default {
 
 .logo-container {
     margin-left: 20px;
-    width: 100px;
+    width: max-content;
     position: relative;
     top: 60px;
 }

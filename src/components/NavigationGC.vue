@@ -88,6 +88,8 @@ export default {
                 Otros
             </span>
         </button>
+        
+        
     </div>
 </template>
 <style scoped>
