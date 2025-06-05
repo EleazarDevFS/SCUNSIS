@@ -19,8 +19,6 @@ export default {
 </script>
 <template>
     <div class="configuracion-container">
-        <ActiveUser class="header" />
-        <AsideComponent class="aside" />
         <main>
              <EditPaperMaster></EditPaperMaster>
             <button >
@@ -36,7 +34,7 @@ export default {
 .configuracion-container {
     display: flex;
     flex-wrap: wrap;
-    width: 100vw;
+    width:calc(100vw - 100px);
     height: 100vh;
 }
 

@@ -18,11 +18,7 @@
     position: relative;
     top: -70px;
   }
-  
-  p{
-    position: relative;
-    top: -45px;
-  }
+
   #logo img {
     min-width: 6vh;
     max-width: 7vh;

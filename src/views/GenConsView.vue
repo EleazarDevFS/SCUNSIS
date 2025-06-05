@@ -45,8 +45,8 @@ export default {
 
 <template>
     <div class="Gen-Con-container">
-        <ActiveUser class="header" />
-        <AsideComponent class="aside" />
+        <!-- <ActiveUser class="header" />
+        <AsideComponent class="aside" /> -->
         <main>
             <!-- <NavigationGC /> -->
             <div class="select-event">
@@ -138,7 +138,7 @@ export default {
 }
 
 main {
-    width: calc(100% - 200px);
+    width: calc(100% - 300px);
     height: calc(100vh - 100px);
     overflow-y: auto;
 }

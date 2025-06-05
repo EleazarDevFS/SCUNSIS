@@ -97,25 +97,18 @@ function handleFileChange(event) {
                 required></textarea>
         </div>
 
-        <div class="grupo-formulario">
-            <label for="hoja-jornadas" style="text-align: center;">Cargar hoja maestra</label>
-            <!-- <input type="file" id="hoja-jornadas" class="campo-archivo" accept="application/pdf"
-                @change="handleFileChange" required> -->
+        <div class="grupo-formulario editor">
+            <div>
+                <label for="hoja-jornadas" style="text-align: center;">Cargar hoja maestra</label>
+            </div>
             <EditPaperMaster />
-             <!-- implementation component editImage -->
+            <!-- implementation component editImage -->
         </div>
 
         <div class="botones-formulario">
             <button type="button" class="boton-cancelar" @click="cerrarFormulario">Cancelar</button>
             <button type="submit" class="boton-enviar" @click="submitForm">Generar</button>
         </div>
-        <!-- Iframe para editar pdf -->
-        <!-- <div v-if="pdfUrl" class="vista-previa-pdf">
-            <h4>Vista previa de la hoja maestra:</h4>
-            <iframe :src="pdfUrl" width="100%" height="700px" style="border: 1px solid #ccc;">
-                <div class="mensaje-en-pdf">{{ mensaje }}</div>
-            </iframe>
-        </div> -->
     </form>
 </template>
 
@@ -151,7 +144,7 @@ hr {
 }
 
 .grupo-formulario {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .grupo-formulario label {
@@ -160,6 +153,7 @@ hr {
     font-weight: 600;
     color: #222;
 }
+
 
 .campo-texto,
 .campo-archivo,
@@ -219,7 +213,13 @@ hr {
     background-color: #999;
 }
 
-
+/* Editor style */
+.editor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
 /*  */
 .vista-previa-pdf {

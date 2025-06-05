@@ -12,9 +12,10 @@ export default {
   },
   methods: {
     login() {
+      // Bandera para mostrar alerta de bienvenida en HomePage
+      sessionStorage.setItem('showWelcomeAlert', '1');
       // Vamos a navegar hacia la vista de Inicio
       this.$router.push('/inicio');
-      
     }
   }
 }
@@ -27,17 +28,32 @@ export default {
     <input type="password" class="inputs-txt sub-log" placeholder="Contraseña" />
     <button type="submit" id="btns" class="submits">Iniciar sesión</button>
   </form>
+
+
 </template>
 
 <style scoped>
 .logotipo{
   margin-top: 16%;
 }
-   .inputs-txt {
-    border-radius: 10px;
-    height: 40px;
-    position: relative;
-  }
+.inputs-txt {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  height: 40px;
+  position: relative;
+  padding: 0 12px;
+  background: #fff;
+  color: #000;
+  font-size: 1em;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 10px auto;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* font-family: Arial, sans-serif; */
+  font-weight: 400;
+}
     /* Contenido encima */
   .login {
     width: max-content;
@@ -59,11 +75,10 @@ export default {
   }
 
   .inputs-txt::placeholder{
-    color: #888;
+    color: #3b3b3b;
     font-style: normal;
     font-size: 1.3em;
     opacity: 1;
-    color: #000000e9;
   }
 
   .sub-log {

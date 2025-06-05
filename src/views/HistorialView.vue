@@ -19,8 +19,6 @@ export default {
 </script>
 <template>
     <div class="historial-container">
-        <ActiveUser class="header" />
-        <AsideComponent class="aside" />
         <main>
             <ul>
                 <li id="search">
@@ -51,7 +49,7 @@ main {
 }
 
 .historial-container {
-    width: 100vw;
+    width: calc(100vw - 100px);
     height: 100vh;
     display: flex;
     flex-wrap: wrap;

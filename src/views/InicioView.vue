@@ -26,8 +26,8 @@ export default {
 </script>
 <template>
   <div class="inicio-container">
-    <ActiveUser class="header" />
-    <AsideComponent class="aside" />
+    <!-- <ActiveUser class="header" />
+    <AsideComponent class="aside" /> -->
     <!-- Contenido principal -->
     <main>
       <div class="shortcuts"  id="genera-constancias">
@@ -44,7 +44,14 @@ export default {
         </svg>
         Historial
       </div>
+      
     </main>
+      <v-alert style="display: none;"
+  color="success"
+  icon="$success"
+  title="Alert title"
+  text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus..."
+></v-alert>
   </div>
 
 </template>
