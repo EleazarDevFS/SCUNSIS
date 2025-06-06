@@ -7,13 +7,15 @@ export default {
     const logOut = document.getElementById('cerrar-sesion');
     const history = document.getElementById('historial-btn');
     const config = document.getElementById('configuracion-btn');
+    const btnsAside = document.querySelector('.btns-aside')
     //Eventos de click en los botones de navegaci+on
     goGCbtn.addEventListener('click', () => {
       this.$router.push('/genera_constancias');
     })
     inicioBtn.addEventListener('click', ()=>{
       this.$router.push('/inicio');
-    })
+      })
+
     logOut.addEventListener('click', ()=>{
       this.$router.push('/')
     })

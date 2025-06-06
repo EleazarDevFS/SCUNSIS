@@ -26,8 +26,6 @@ export default {
 </script>
 <template>
   <div class="inicio-container">
-    <!-- <ActiveUser class="header" />
-    <AsideComponent class="aside" /> -->
     <!-- Contenido principal -->
     <main>
       <div class="shortcuts"  id="genera-constancias">
@@ -57,7 +55,7 @@ export default {
 </template>
 <style scoped>
 .inicio-container {
-  width: 100vw;
+  width: calc (100vw - 100px);
   height: 100vh;
   display: flex;
   flex-wrap: wrap;

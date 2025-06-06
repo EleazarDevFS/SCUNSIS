@@ -254,10 +254,6 @@ const onDrag = (event) => {
   display: inline-block;
 }
 
-canvas {
-  /* display: block; */
-}
-
 .text-box {
   position: absolute;
   padding: 4px 8px;

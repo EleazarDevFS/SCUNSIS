@@ -45,8 +45,6 @@ export default {
 
 <template>
     <div class="Gen-Con-container">
-        <!-- <ActiveUser class="header" />
-        <AsideComponent class="aside" /> -->
         <main>
             <!-- <NavigationGC /> -->
             <div class="select-event">

@@ -11,7 +11,8 @@ export default {
   },
   mounted() {
     // Aplicar imagen de fondo cuando entramos a la aplicación
-    document.body.style.background = "#EBE7E7";
+    document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed';
+    document.body.style.backgroundSize = 'cover';
   }
 }
 </script>
