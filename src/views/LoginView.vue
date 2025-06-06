@@ -1,28 +1,22 @@
-<script>
-import Logo from '../components/Logo.vue';
+<script setup>
+import { onMounted } from 'vue'
+import { useToast } from 'vue-toastification'
+import { useRouter } from 'vue-router'
+import Logo from '../components/Logo.vue'
 
-export default {
-  components: {
-    Logo
-  },
-  data() {
-    return {
-      showSnackbar: false
-    }
-  },
-  mounted() {
-    // Aplicar imagen de fondo especial para el login
-    document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed';
-    document.body.style.backgroundSize = 'cover';
-  },
-  methods: {
-    login() {
-      this.showSnackbar = true;
-      setTimeout(() => {
-        this.$router.push('/inicio');
-      }, 500); // Espera a que se muestre la alerta
-    }
-  }
+const toast = useToast()
+const router = useRouter()
+
+onMounted(() => {
+  document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed'
+  document.body.style.backgroundSize = 'cover'
+})
+
+function login() {
+  toast.success('¡Iniciaste sesión exitosamente!')
+  setTimeout(() => {
+    router.push('/inicio')
+  }, 300)
 }
 </script>
 
@@ -32,10 +26,9 @@ export default {
     <Logo class="logotipo" />
     <input type="text" class="inputs-txt sub-log" placeholder="Usuario" />
     <input type="password" class="inputs-txt sub-log" placeholder="Contraseña" />
-    <v-snackbar v-model="showSnackbar" :timeout="1200" color="success" variant="outlined">
-      A iniciado <strong>sesión</strong> con exito.
-    </v-snackbar>
-    <v-btn id="log" class="ma-2" color="#7C0A02" variant="outlined" @click="login">Iniciar sesión</v-btn>
+    <v-btn color="#7C0A02" variant="outlined" @click="login">
+      Iniciar sesión
+    </v-btn>
   </form>
 </template>
 
