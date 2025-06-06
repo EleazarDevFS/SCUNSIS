@@ -1,16 +1,35 @@
 <script>
+
 import AsideComponent from './components/AsideComponent.vue';
 import ActiveUser from './components/ActiveUser.vue';
-import EditPaperMaster from './components/EditPaperMaster.vue';
+import LoginView from './views/LoginView.vue';
+import InicioView from './views/InicioView.vue';
+import GenConsView from './views/GenConsView.vue';
+import HistorialView from './views/HistorialView.vue';
+import ConfiguracionView from './views/ConfiguracionView.vue';
 
 export default {
   name: 'App',
   components: {
     AsideComponent,
-    ActiveUser
+    ActiveUser,
+    LoginView,
+    InicioView,
+    GenConsView,
+    HistorialView,
+    ConfiguracionView
+  },
+  data() {
+    return {
+      activeView: 'InicioView' // Vista por defecto
+    }
+  },
+  methods: {
+    setActiveView(view) {
+      this.activeView = view;
+    }
   },
   mounted() {
-    // Aplicar imagen de fondo cuando entramos a la aplicación
     document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed';
     document.body.style.backgroundSize = 'cover';
   }
@@ -20,15 +39,15 @@ export default {
   <div class="container-app">
     <template v-if="$route.path === '/'">
       <div class="login-center">
-        <router-view />
+         <LoginView/>
       </div>
     </template>
     <template v-else>
       <ActiveUser class="header" />
       <div class="layout-body">
-        <AsideComponent class="aside"/>
+        <AsideComponent class="aside" @change-view="setActiveView" />
         <main class="main-content">
-          <router-view />
+          <component :is="activeView" />
         </main>
       </div>
     </template>
@@ -48,7 +67,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #EBE7E7;
+  /* background: url("public/img/image.png") no-repeat center center fixed; */
 }
 
 .container-app {
@@ -74,7 +93,7 @@ export default {
 .main-content {
   flex: 1 1 0%;
   min-width: 0;
-  height: calc(100vh - 100px);
+  height: 100vh;
   overflow-y: auto;
 }
 

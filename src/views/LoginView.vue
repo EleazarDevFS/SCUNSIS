@@ -5,36 +5,38 @@ export default {
   components: {
     Logo
   },
+  data() {
+    return {
+      showSnackbar: false
+    }
+  },
   mounted() {
-    // Aplicar imagen de fondo cuando entramos al login
+    // Aplicar imagen de fondo especial para el login
     document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed';
     document.body.style.backgroundSize = 'cover';
   },
   methods: {
     login() {
-
-      // Vamos a navegar hacia la vista de Inicio
-      this.$router.push('/inicio');
+      this.showSnackbar = true;
+      setTimeout(() => {
+        this.$router.push('/inicio');
+      }, 500); // Espera a que se muestre la alerta
     }
   }
 }
 </script>
 
 <template>
-  <form class="login" id="loginsc">
+  
+  <form class="login" id="loginsc" @submit.prevent="login">
     <Logo class="logotipo" />
     <input type="text" class="inputs-txt sub-log" placeholder="Usuario" />
     <input type="password" class="inputs-txt sub-log" placeholder="Contraseña" />
-    <v-snackbar :timeout="2000" color="success" variant="outlined">
-      <template v-slot:activator="{ props }">
-        <v-btn id="log" class="ma-2" color="#7C0A02" variant="outlined" v-bind="props" @click="login">Iniciar sesión</v-btn>
-      </template>
+    <v-snackbar v-model="showSnackbar" :timeout="1200" color="success" variant="outlined">
       A iniciado <strong>sesión</strong> con exito.
     </v-snackbar>
-    <!-- <button type="submit" id="btns" class="submits">Iniciar sesión</button> -->
+    <v-btn id="log" class="ma-2" color="#7C0A02" variant="outlined" @click="login">Iniciar sesión</v-btn>
   </form>
-
-
 </template>
 
 <style scoped>
@@ -75,7 +77,7 @@ export default {
   border-radius: 1em;
   color: #000;
   width: 100%;
-  max-width: 800px;
+  max-width: 200px;
   min-width: 400px;
   height: auto;
   gap: 10px;
@@ -112,5 +114,10 @@ export default {
 #btns {
   position: relative;
   top: -1.2em;
+}
+#log{
+  position: absolute;
+  top: 80%;
+  width: calc(100% - 70px);
 }
 </style>
