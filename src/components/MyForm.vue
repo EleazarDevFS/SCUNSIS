@@ -117,14 +117,17 @@ function handleFileChange(event) {
 .formulario {
     display: flex;
     flex-direction: column;
-    max-width: 600px;
-    max-height: 90%;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
     overflow-y: auto;
-    margin: 20px auto;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
     background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 0;
+    box-shadow: none;
+    box-sizing: border-box;
 }
 
 .title-form {

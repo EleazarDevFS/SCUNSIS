@@ -97,8 +97,8 @@ export default {
 .aside {
   height: 100vh;
   width: 300px;
-  min-width: 300px;
-  max-width: 300px;
+  min-width: 250px;
+  max-width: 200px;
   flex: 0 0 250px;
   box-sizing: border-box;
 }

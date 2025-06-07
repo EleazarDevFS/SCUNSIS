@@ -114,9 +114,16 @@ export default {
             <!-- formulario otros -->
             <div id="otros-container" v-if="mostrarFormularioId === 'form-otros'">
                 <div class="name-evento">
-                <label for="otros">Tipo de evento: </label>
-                <input id="input-others" v-model="nombreConstanciaOtro" type="text"
-                    placeholder="Nombre del evento" name="otros" />
+                <v-text-field
+                  id="input-others"
+                  v-model="nombreConstanciaOtro"
+                  :rules="rules"
+                  hide-details="auto"
+                  label="Tipo de evento"
+                  placeholder="Nombre del evento"
+                  name="otros"
+                    
+                />
                     </div>
                 <MyForm v-if="nombreConstanciaOtro" :titulo="nombreConstanciaOtro" :value="otroValue"
                     mensajePlaceholder="Se le otorga la siguiente constancia X por X razón..." />
@@ -136,18 +143,9 @@ export default {
 }
 
 main {
-    width: calc(100% - 300px);
+    width: calc(100% - 250px);
     height: calc(100vh - 100px);
     overflow-y: auto;
-}
-
-.header {
-    width: 100%;
-}
-
-.aside {
-    height: 100vh;
-    width: 200px;
 }
 
 /* Terminan estilos para main y contenedor principal */

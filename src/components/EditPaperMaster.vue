@@ -35,35 +35,48 @@
           <label>Editar texto:</label>
           <textarea id="text-edition" v-model="textBoxes[selectedBox].text"></textarea>
           <div style="margin-top: 12px;">
-            <label>Tipo de letra:</label>
-            <select v-model="textBoxes[selectedBox].fontFamily">
-              <option value="Arial">Arial</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Courier New">Courier New</option>
-              <option value="Verdana">Verdana</option>
-              <option value="monospace">Monospace</option>
-              <option value="serif">Serif</option>
-              <option value="sans-serif">Sans-serif</option>
-            </select>
+            <v-select
+              label="Tipo de letra"
+              :items="[
+                { title: 'Arial', value: 'Arial' },
+                { title: 'Times New Roman', value: 'Times New Roman' },
+                { title: 'Courier New', value: 'Courier New' },
+                { title: 'Verdana', value: 'Verdana' },
+                { title: 'Monospace', value: 'monospace' },
+                { title: 'Serif', value: 'serif' },
+                { title: 'Sans-serif', value: 'sans-serif' }
+              ]"
+              v-model="textBoxes[selectedBox].fontFamily"
+              variant="solo"
+            />
           </div>
-          <div style="margin-top: 12px; display: flex;  gap: 16px;">
+          <div style="display: flex;  gap: 16px;">
             <div style="display: flex; flex-direction: column; align-items: flex-start;">
               <label>Color de texto:</label>
               <v-color-picker v-model="textBoxes[selectedBox].color" mode="rgba" show-swatches hide-canvas hide-inputs
-                dot-size="18" swatches-max-height="120" style="max-width: 220px; margin-top: 8px;" />
+                dot-size="18" swatches-max-height="120" style="max-width: 320px; margin-top: 8px;" />
+                 <v-text-field id="font-size-input"
+              v-model="textBoxes[selectedBox].fontSize"
+              type="number"
+              :min="8"
+              :max="72"
+              label="Tamaño (px)"
+              style="width: 100%; margin-top: 8px;"
+              variant="solo"
+            />
             </div>
+            
             <div style="display: flex; flex-direction: column; align-items: flex-start;">
               <label>Fondo:</label>
               <v-color-picker v-model="textBoxes[selectedBox].background" mode="rgba" show-swatches hide-canvas
-                hide-inputs dot-size="18" swatches-max-height="120" style="max-width: 220px; margin-top: 8px;" />
-              <button style="margin-left:0; margin-top:8px;" @click="clearBackground">Quitar fondo</button>
+                hide-inputs dot-size="18" swatches-max-height="120" style="max-width: 320px; margin-top: 8px;" />
+              <v-btn  style="margin-left:0; margin-top:8px; height: 55px; width: 100%;" @click="clearBackground">
+                Quitar fondo
+              </v-btn>
+              
             </div>
           </div>
-          <div style="margin-top: 12px;">
-            <label>Tamaño (px):</label>
-            <input type="number" min="8" max="72" v-model.number="textBoxes[selectedBox].fontSize"
-              style="width:60px;" />
-          </div>
+           
         </div>
       </div>
     </div>
@@ -250,6 +263,28 @@ defineExpose({ getCanvasImage });
   margin: 20px auto;
   padding: 10px;
   border-radius: 10px;
+  width: 100%;
+  height: auto;
+  overflow-y: auto;
+  /* Personalización de la barra de desplazamiento */
+  scrollbar-width: thin;
+  scrollbar-color: #7C0A02 #e0e0e0;
+  scrollbar-width: 30px;
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+.editor::-webkit-scrollbar {
+  width: 30px;
+  background: #e0e0e0;
+  border-radius: 8px;
+}
+.editor::-webkit-scrollbar-thumb {
+  background: #7C0A02;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+.editor::-webkit-scrollbar-thumb:hover {
+  background: #a11a1a;
 }
 
 .delete-btn {
