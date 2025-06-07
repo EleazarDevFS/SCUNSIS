@@ -7,6 +7,7 @@ const props = defineProps({
     mensajePlaceholder: String
 })
 
+const editPaperMasterRef = ref(null)
 const pdfUrl = ref(null)
 const mensaje = ref('')
 const cerrarFormulario = () => {
@@ -14,43 +15,43 @@ const cerrarFormulario = () => {
 }
 
 const submitForm = async () => {
-    const input = document.getElementById('hoja-jornadas')
-    const file = input.files[0]
-
-    if (!file) {
-        alert('Primero selecciona un archivo PDF.')
+    // 1. Obtener imagen PNG del canvas editado (incluye todos los textos y ediciones)
+  const canvasImage = editPaperMasterRef.value?.getCanvasImage?.()
+    if (!canvasImage) {
+        console.log(canvasImage)
+        alert('Primero edita y carga la hoja maestra en el editor.')
         return
     }
 
-    const arrayBuffer = await file.arrayBuffer()
-    const pdfDoc = await PDFDocument.load(arrayBuffer)
+    // 2. Crear un PDF nuevo con el tamaño del canvas
+    const tempImg = new window.Image();
+    tempImg.src = canvasImage;
+    await new Promise(resolve => { tempImg.onload = resolve; });
+    const width = tempImg.width;
+    const height = tempImg.height;
 
-    const pages = pdfDoc.getPages()
-    const firstPage = pages[0]
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([width, height]);
 
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
-    const { width, height } = firstPage.getSize()
+    // 3. Insertar imagen del canvas (ya contiene todos los textos y ediciones)
+    const pngImage = await pdfDoc.embedPng(canvasImage);
+    page.drawImage(pngImage, {
+        x: 0,
+        y: 0,
+        width,
+        height
+    });
 
-    // Aquí dibujamos el mensaje en el PDF
-    firstPage.drawText(mensaje.value, {
-        x: 50,
-        y: height - 100,
-        size: 14,
-        font,
-        color: rgb(0, 0, 0),
-    })
-
-    const modifiedPdfBytes = await pdfDoc.save()
-
-    // Crear descarga automática del PDF modificado
-    const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'constancia-con-mensaje.pdf'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    // 4. Guardar y descargar
+    const modifiedPdfBytes = await pdfDoc.save();
+    const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'constancia-con-mensaje.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Edit Master Page
@@ -79,29 +80,29 @@ function handleFileChange(event) {
         <hr />
         <div class="grupo-formulario">
             <label for="numero-jornadas">Número de constancias a generar</label>
-            <input type="number" id="numero-jornadas" class="campo-texto" placeholder="10" required>
+            <input type="number" id="numero-jornadas" class="campo-texto" placeholder="10" >
         </div>
 
         <div class="grupo-formulario">
             <label for="excel-jornadas">Cargar excel con los datos de las personas</label>
-            <input type="file" id="excel-jornadas" class="campo-archivo" accept=".xlsx" required>
+            <input type="file" id="excel-jornadas" class="campo-archivo" accept=".xlsx" >
         </div>
 
         <div class="grupo-formulario">
             <label for="fecha-jornadas">Seleccionar fecha</label>
-            <input type="date" id="fecha-jornadas" class="campo-texto" required>
+            <input type="date" id="fecha-jornadas" class="campo-texto" >
         </div>
         <div class="grupo-formulario">
             <label for="mensaje">Mensaje:</label>
             <textarea id="mensaje" class="campo-textoarea" :placeholder="mensajePlaceholder" v-model="mensaje"
-                required></textarea>
+                ></textarea>
         </div>
 
         <div class="grupo-formulario editor">
             <div>
                 <label for="hoja-jornadas" style="text-align: center;">Cargar hoja maestra</label>
             </div>
-            <EditPaperMaster />
+            <EditPaperMaster ref="editPaperMasterRef" />
             <!-- implementation component editImage -->
         </div>
 

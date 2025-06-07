@@ -58,8 +58,6 @@ export default {
 <style>
 * {
   font-family: 'Poppins', sans-serif;
-  ;
-
 }
 .login-center {
   width: 100vw;
@@ -67,7 +65,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* background: url("public/img/image.png") no-repeat center center fixed; */
 }
 
 .container-app {

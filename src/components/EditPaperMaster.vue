@@ -70,11 +70,13 @@
   </div>
 </template>
 
+
+import { defineExpose } from 'vue'
 <script setup>
 
-import { ref, reactive } from 'vue'
-// import ColorPickerAdvanced from './ColorPickerAdvanced.vue'
-import { ColorPicker } from 'pdfjs-dist'
+import { ref, reactive, watch } from 'vue'
+// watch(textBoxes, drawCanvas, { deep: true })
+
 
 // IDs y textos por defecto
 const defaultTextBoxes = [
@@ -123,6 +125,7 @@ const clearBackground = (event) => {
   }
 }
 
+
 const onImageChange = (event) => {
   const file = event.target.files[0]
   if (!file) return
@@ -130,20 +133,44 @@ const onImageChange = (event) => {
   reader.onload = (e) => {
     image.value = new Image()
     image.value.onload = () => {
-      drawImage()
       addDefaultTextBoxes()
+      drawCanvas()
     }
     image.value.src = e.target.result
   }
   reader.readAsDataURL(file)
 }
-
-const drawImage = () => {
-  const ctx = canvas.value.getContext('2d')
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+// Dibuja la imagen de fondo y todos los textos sobre el canvas
+const drawCanvas = () => {
+  const ctx = canvas.value.getContext('2d');
+  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+  // Dibuja la imagen de fondo
   if (image.value) {
-    ctx.drawImage(image.value, 0, 0, canvas.value.width, canvas.value.height)
+    ctx.drawImage(image.value, 0, 0, canvas.value.width, canvas.value.height);
   }
+  // Dibuja cada caja de texto
+  textBoxes.forEach(box => {
+    // Fondo de la caja de texto (si no es transparente)
+    if (box.background && box.background !== 'rgba(255,255,255,0)') {
+      ctx.save();
+      ctx.fillStyle = box.background;
+      ctx.font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
+      const metrics = ctx.measureText(box.text);
+      const paddingX = 8;
+      const paddingY = 4;
+      const textWidth = metrics.width;
+      const textHeight = box.fontSize || 18;
+      ctx.fillRect(box.x - paddingX, box.y - paddingY, textWidth + 2 * paddingX, textHeight + 2 * paddingY);
+      ctx.restore();
+    }
+    // Texto
+    ctx.save();
+    ctx.font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
+    ctx.fillStyle = box.color || '#000000';
+    ctx.textBaseline = 'top';
+    ctx.fillText(box.text, box.x, box.y);
+    ctx.restore();
+  });
 }
 
 
@@ -187,12 +214,14 @@ const startDrag = (index, event) => {
   selectedBox.value = index
   window.addEventListener('mousemove', onDrag)
   window.addEventListener('mouseup', stopDrag)
+  drawCanvas() // Redibuja el canvas al iniciar el drag
 }
 
 const stopDrag = () => {
   draggingIndex = null
   window.removeEventListener('mousemove', onDrag)
   window.removeEventListener('mouseup', stopDrag)
+  drawCanvas() // Redibuja el canvas después de mover
 }
 
 const onDrag = (event) => {
@@ -202,7 +231,15 @@ const onDrag = (event) => {
   // El mouse está en clientX/clientY, queremos que la esquina superior izquierda de la caja siga el mouse menos el offset
   textBoxes[draggingIndex].x = event.clientX - containerRect.left - offset.x
   textBoxes[draggingIndex].y = event.clientY - containerRect.top - offset.y
+  drawCanvas() // Redibuja el canvas mientras se arrastra
 }
+function getCanvasImage() {
+  if (!canvas.value) return undefined;
+  drawCanvas();
+  return canvas.value.toDataURL('image/png');
+}
+
+defineExpose({ getCanvasImage });
 
 </script>
 
