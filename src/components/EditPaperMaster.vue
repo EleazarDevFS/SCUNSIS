@@ -27,7 +27,7 @@
         <div v-for="(box, index) in textBoxes" :key="index" class="text-box" :style="{
           top: box.y + 'px',
           left: box.x + 'px',
-          opacity: 0.3,
+          opacity: 0.2,
           fontFamily: box.fontFamily,
           color: box.color,
           fontSize: box.fontSize + 'px',
@@ -102,10 +102,7 @@
 
 import { defineExpose } from 'vue'
 <script setup>
-
 import { ref, reactive, watch, nextTick } from 'vue'
-  import { mdiAccount } from '@mdi/js'
-
 // IDs y textos por defecto
 const defaultTextBoxes = [
   { id: 'emisor-text', text: 'Emisor', x: 350, y: 40 },

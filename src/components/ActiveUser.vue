@@ -4,19 +4,17 @@ export default {
     components: {
         Logo
     },
-    mounted(){
-        // Botón para navegar al inicio de la aplicación web
-        const logoUnsis = document.querySelector('.logo-unsis');
-        logoUnsis.addEventListener('click', ()=>{
-            this.$router.push('/inicio');
-        })
+    methods: {
+        handleLogoClick(view) {
+            this.$emit('change-view', view);
+        }
     }
 }
 </script>
 <template>
     <div class="activeUser">
         <div class="logo-container">
-            <Logo class="logo-unsis" />
+            <Logo class="logo-unsis" @change-view="handleLogoClick" />
         </div>
         <div class="iconUserActive">
             <span id="text-user">Nombre de usuario</span>

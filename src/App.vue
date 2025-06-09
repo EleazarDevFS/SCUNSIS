@@ -43,7 +43,7 @@ export default {
       </div>
     </template>
     <template v-else>
-      <ActiveUser class="header" />
+      <ActiveUser class="header" @change-view="setActiveView" />
       <div class="layout-body">
         <AsideComponent class="aside" @change-view="setActiveView" />
         <main class="main-content">

@@ -1,5 +1,14 @@
+<script setup>
+import { useRouter } from 'vue-router';
+const emit = defineEmits(['change-view']);
+const router = useRouter();
+const goToHome = () => {
+  router.push('/inicio');
+  emit('change-view', 'InicioView');
+}
+</script>
 <template>
-    <div id="logo">
+    <div id="logo" @click="goToHome">
       <img src="/public/img/image copy.png" alt="Logo" />
       <p>SC-UNSIS</p>   
     </div>

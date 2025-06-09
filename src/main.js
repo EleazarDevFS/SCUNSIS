@@ -10,7 +10,7 @@ import * as directives from 'vuetify/directives'
 // importacion para vue-toastification
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
-
+// Store to global message
 const vuetify = createVuetify({
   components,
   directives,
