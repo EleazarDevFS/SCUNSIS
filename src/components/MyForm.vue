@@ -16,7 +16,7 @@ const cerrarFormulario = () => {
 
 const submitForm = async () => {
     // 1. Obtener imagen PNG del canvas editado (incluye todos los textos y ediciones)
-  const canvasImage = editPaperMasterRef.value?.getCanvasImage?.()
+    const canvasImage = editPaperMasterRef.value?.getCanvasImage?.()
     if (!canvasImage) {
         console.log(canvasImage)
         alert('Primero edita y carga la hoja maestra en el editor.')
@@ -80,22 +80,25 @@ function handleFileChange(event) {
         <hr />
         <div class="grupo-formulario">
             <label for="numero-jornadas">Número de constancias a generar</label>
-            <input type="number" id="numero-jornadas" class="campo-texto" placeholder="10" >
+            <input type="number" id="numero-jornadas" class="campo-texto" placeholder="10">
         </div>
 
         <div class="grupo-formulario">
             <label for="excel-jornadas">Cargar excel con los datos de las personas</label>
-            <input type="file" id="excel-jornadas" class="campo-archivo" accept=".xlsx" >
+            <v-file-input label="Archivo Excel" accept=".xlsx" multiple 
+            :rules="[value => !!value || 'Porfavor cargue un archivo .xlsx o calc']"
+            class="campo-archivo"
+                id="excel-jornadas"></v-file-input>
         </div>
 
         <div class="grupo-formulario">
             <label for="fecha-jornadas">Seleccionar fecha</label>
-            <input type="date" id="fecha-jornadas" class="campo-texto" >
+            <input type="date" id="fecha-jornadas" class="campo-texto">
         </div>
         <div class="grupo-formulario">
             <label for="mensaje">Mensaje:</label>
-            <textarea id="mensaje" class="campo-textoarea" :placeholder="mensajePlaceholder" v-model="mensaje"
-                ></textarea>
+            <textarea id="mensaje" class="campo-textoarea" :placeholder="mensajePlaceholder"
+                v-model="mensaje"></textarea>
         </div>
 
         <div class="grupo-formulario editor">

@@ -1,12 +1,14 @@
 <template>
   <div class="editor">
     <v-file-input 
-    style="width: 100%; margin-bottom: 10px; margin-left: -50px;"
+    style="width: 100%; margin-bottom: 10px; "
       label="Cargar imagen de fondo"
       variant="solo-filled"
       accept="image/*"
       @change="onImageChange"
-      prepend-icon="mdi-image"
+      prepend-icon="mdi-file-upload"
+      :rules="[value => !!value || 'Por favor, cargue una imagen']"
+      placeholder="Seleccione una imagen de fondo"
     />
     <v-btn 
       @click="addTextBox" 
@@ -84,7 +86,7 @@
               <label>Fondo:</label>
               <v-color-picker v-model="textBoxes[selectedBox].background" mode="rgba" show-swatches hide-canvas
                 hide-inputs dot-size="18" swatches-max-height="120" style="max-width: 320px; margin-top: 8px;" />
-              <v-btn  style="margin-left:0; margin-top:8px; height: 55px; width: 100%;" @click="clearBackground">
+              <v-btn  style="margin-left:0; margin-top:8px; height: 55px; width: 100%;" @click="clearBackground" >
                 Quitar fondo
               </v-btn>
               
@@ -102,7 +104,7 @@ import { defineExpose } from 'vue'
 <script setup>
 
 import { ref, reactive, watch, nextTick } from 'vue'
-
+  import { mdiAccount } from '@mdi/js'
 
 // IDs y textos por defecto
 const defaultTextBoxes = [
