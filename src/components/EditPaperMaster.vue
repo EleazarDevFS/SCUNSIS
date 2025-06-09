@@ -1,18 +1,31 @@
 <template>
   <div class="editor">
-    <input type="file" accept="image/*" @change="onImageChange" />
-    <button @click="addTextBox" :disabled="image === null"
-      style=" background: rgba(124, 10, 2,.5); color: #fff; border: none; border-radius: 4px; padding: 1px 2px; font-size: 16px; cursor: pointer; transition: background 0.2s;">
+    <v-file-input 
+    style="width: 100%; margin-bottom: 10px; margin-left: -50px;"
+      label="Cargar imagen de fondo"
+      variant="solo-filled"
+      accept="image/*"
+      @change="onImageChange"
+      prepend-icon="mdi-image"
+    />
+    <v-btn 
+      @click="addTextBox" 
+      :disabled="image === null" 
+      variant="tonal"
+      color="#7C0A02"
+      style="margin-bottom: 16px; width: 100%;"
+    >
       Agregar Caja de Texto
-    </button>
+    </v-btn>
     <div class="sidebar-container">
       <!-- <div class="main-content"> -->
 
       <div class="canvas-container" ref="canvasContainer">
-        <canvas ref="canvas" width="800" height="600"></canvas>
+        <canvas ref="canvas" width="800px" height="600"></canvas>
         <div v-for="(box, index) in textBoxes" :key="index" class="text-box" :style="{
           top: box.y + 'px',
           left: box.x + 'px',
+          opacity: 0.3,
           fontFamily: box.fontFamily,
           color: box.color,
           fontSize: box.fontSize + 'px',
@@ -22,7 +35,8 @@
           minWidth: '40px',
         }" :class="{ selected: selectedBox === index }" @mousedown="startDrag(index, $event)"
           @click.stop="selectBox(index)">
-          {{ box.text }}
+          <span id="span-opacity" v-if="selectedBox === index" style=" pointer-events:none; user-select:none;">{{ box.text }}</span>
+          <span v-else>{{ box.text }}</span>
           <button v-if="box.id && box.id.startsWith('extra-text-')" class="delete-btn"
             @click.stop="removeTextBox(index)">✕</button>
         </div>
@@ -33,7 +47,7 @@
       <div class="sidebar">
         <div v-if="selectedBox !== null">
           <label>Editar texto:</label>
-          <textarea id="text-edition" v-model="textBoxes[selectedBox].text"></textarea>
+          <textarea id="text-edition" v-model="textBoxes[selectedBox].text" @input="drawCanvas"></textarea>
           <div style="margin-top: 12px;">
             <v-select
               label="Tipo de letra"
@@ -87,8 +101,7 @@
 import { defineExpose } from 'vue'
 <script setup>
 
-import { ref, reactive, watch } from 'vue'
-// watch(textBoxes, drawCanvas, { deep: true })
+import { ref, reactive, watch, nextTick } from 'vue'
 
 
 // IDs y textos por defecto
@@ -138,6 +151,34 @@ const clearBackground = (event) => {
   }
 }
 
+// --- Watchers for real-time updates on font, color, background, font size ---
+watch(selectedBox, (newIdx, oldIdx) => {
+  // When selection changes, re-draw (in case style changes)
+  drawCanvas();
+  // Remove previous watchers if any
+  if (oldIdx !== null && textBoxes[oldIdx]) {
+    if (textBoxes[oldIdx].__unwatchers) {
+      textBoxes[oldIdx].__unwatchers.forEach(unwatch => unwatch());
+      textBoxes[oldIdx].__unwatchers = undefined;
+    }
+  }
+  // Add new watchers for the selected box
+  if (newIdx !== null && textBoxes[newIdx]) {
+    const box = textBoxes[newIdx];
+    box.__unwatchers = [
+      watch(() => box.fontFamily, drawCanvas),
+      watch(() => box.fontSize, drawCanvas),
+      watch(() => box.color, drawCanvas),
+      watch(() => box.background, drawCanvas)
+    ];
+  }
+});
+
+// Also, watch for changes in the actual array (e.g., when a new box is added/removed)
+watch(textBoxes, () => {
+  drawCanvas();
+}, { deep: true });
+
 
 const onImageChange = (event) => {
   const file = event.target.files[0]
@@ -153,6 +194,7 @@ const onImageChange = (event) => {
   }
   reader.readAsDataURL(file)
 }
+
 // Dibuja la imagen de fondo y todos los textos sobre el canvas
 const drawCanvas = () => {
   const ctx = canvas.value.getContext('2d');
@@ -176,15 +218,23 @@ const drawCanvas = () => {
       ctx.fillRect(box.x - paddingX, box.y - paddingY, textWidth + 2 * paddingX, textHeight + 2 * paddingY);
       ctx.restore();
     }
-    // Texto
+    // Texto: solo dibujar en canvas si es para PDF o si quieres mostrarlo en pantalla
     ctx.save();
     ctx.font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
-    ctx.fillStyle = box.color || '#000000';
     ctx.textBaseline = 'top';
-    ctx.fillText(box.text, box.x, box.y);
+    // Si quieres que el texto NO se vea en pantalla pero SÍ en PDF, hazlo condicional:
+    // if (typeof window.__drawForPDF !== 'undefined' && window.__drawForPDF) {
+      ctx.fillStyle = box.color || '#000000';
+      ctx.fillText(box.text, box.x + 10 , box.y + 7);
+    // }
     ctx.restore();
   });
 }
+
+// Ensure canvas is updated after mount
+nextTick(() => {
+  drawCanvas();
+});
 
 
 let extraBoxCount = 1;
@@ -248,7 +298,10 @@ const onDrag = (event) => {
 }
 function getCanvasImage() {
   if (!canvas.value) return undefined;
+  // Bandera global para indicar que es para PDF
+  window.__drawForPDF = true;
   drawCanvas();
+  window.__drawForPDF = false;
   return canvas.value.toDataURL('image/png');
 }
 
@@ -257,6 +310,7 @@ defineExpose({ getCanvasImage });
 </script>
 
 <style scoped>
+
 .editor {
   background: #f7f7f7;
   font-family: sans-serif;

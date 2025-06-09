@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "jspdf": "^3.0.1",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.3.31",
