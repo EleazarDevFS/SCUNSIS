@@ -105,7 +105,8 @@ function handleFileChange(event) {
             <div>
                 <label for="hoja-jornadas" style="text-align: center;">Cargar hoja maestra</label>
             </div>
-            <EditPaperMaster ref="editPaperMasterRef" />
+            <span>{{mensaje}}</span>
+            <EditPaperMaster ref="editPaperMasterRef" :valorTexto="mensaje" />
             <!-- implementation component editImage -->
         </div>
 

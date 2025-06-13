@@ -1,22 +1,10 @@
 <template>
   <div class="editor">
-    <v-file-input 
-    style="width: 100%; margin-bottom: 10px; "
-      label="Cargar imagen de fondo"
-      variant="solo-filled"
-      accept="image/*"
-      @change="onImageChange"
-      prepend-icon="mdi-file-upload"
-      :rules="[value => !!value || 'Por favor, cargue una imagen']"
-      placeholder="Seleccione una imagen de fondo"
-    />
-    <v-btn 
-      @click="addTextBox" 
-      :disabled="image === null" 
-      variant="tonal"
-      color="#7C0A02"
-      style="margin-bottom: 16px; width: 100%;"
-    >
+    <v-file-input style="width: 100%; margin-bottom: 10px; " label="Cargar imagen de fondo" variant="solo-filled"
+      accept="image/*" @change="onImageChange" prepend-icon="mdi-file-upload"
+      :rules="[value => !!value || 'Por favor, cargue una imagen']" placeholder="Seleccione una imagen de fondo" />
+    <v-btn @click="addTextBox" :disabled="image === null" variant="tonal" color="#7C0A02"
+      style="margin-bottom: 16px; width: 100%;">
       Agregar Caja de Texto
     </v-btn>
     <div class="sidebar-container">
@@ -37,7 +25,8 @@
           minWidth: '40px',
         }" :class="{ selected: selectedBox === index }" @mousedown="startDrag(index, $event)"
           @click.stop="selectBox(index)">
-          <span id="span-opacity" v-if="selectedBox === index" style=" pointer-events:none; user-select:none;">{{ box.text }}</span>
+          <span id="span-opacity" v-if="selectedBox === index" style=" pointer-events:none; user-select:none;">{{
+            box.text }}</span>
           <span v-else>{{ box.text }}</span>
           <button v-if="box.id && box.id.startsWith('extra-text-')" class="delete-btn"
             @click.stop="removeTextBox(index)">✕</button>
@@ -51,48 +40,36 @@
           <label>Editar texto:</label>
           <textarea id="text-edition" v-model="textBoxes[selectedBox].text" @input="drawCanvas"></textarea>
           <div style="margin-top: 12px;">
-            <v-select
-              label="Tipo de letra"
-              :items="[
-                { title: 'Arial', value: 'Arial' },
-                { title: 'Times New Roman', value: 'Times New Roman' },
-                { title: 'Courier New', value: 'Courier New' },
-                { title: 'Verdana', value: 'Verdana' },
-                { title: 'Monospace', value: 'monospace' },
-                { title: 'Serif', value: 'serif' },
-                { title: 'Sans-serif', value: 'sans-serif' }
-              ]"
-              v-model="textBoxes[selectedBox].fontFamily"
-              variant="solo"
-            />
+            <v-select label="Tipo de letra" :items="[
+              { title: 'Arial', value: 'Arial' },
+              { title: 'Times New Roman', value: 'Times New Roman' },
+              { title: 'Courier New', value: 'Courier New' },
+              { title: 'Verdana', value: 'Verdana' },
+              { title: 'Monospace', value: 'monospace' },
+              { title: 'Serif', value: 'serif' },
+              { title: 'Sans-serif', value: 'sans-serif' }
+            ]" v-model="textBoxes[selectedBox].fontFamily" variant="solo" />
           </div>
           <div style="display: flex;  gap: 16px;">
             <div style="display: flex; flex-direction: column; align-items: flex-start;">
               <label>Color de texto:</label>
               <v-color-picker v-model="textBoxes[selectedBox].color" mode="rgba" show-swatches hide-canvas hide-inputs
                 dot-size="18" swatches-max-height="120" style="max-width: 320px; margin-top: 8px;" />
-                 <v-text-field id="font-size-input"
-              v-model="textBoxes[selectedBox].fontSize"
-              type="number"
-              :min="8"
-              :max="72"
-              label="Tamaño (px)"
-              style="width: 100%; margin-top: 8px;"
-              variant="solo"
-            />
+              <v-text-field id="font-size-input" v-model="textBoxes[selectedBox].fontSize" type="number" :min="8"
+                :max="72" label="Tamaño (px)" style="width: 100%; margin-top: 8px;" variant="solo" />
             </div>
-            
+
             <div style="display: flex; flex-direction: column; align-items: flex-start;">
               <label>Fondo:</label>
               <v-color-picker v-model="textBoxes[selectedBox].background" mode="rgba" show-swatches hide-canvas
                 hide-inputs dot-size="18" swatches-max-height="120" style="max-width: 320px; margin-top: 8px;" />
-              <v-btn  style="margin-left:0; margin-top:8px; height: 55px; width: 100%;" @click="clearBackground" >
+              <v-btn style="margin-left:0; margin-top:8px; height: 55px; width: 100%;" @click="clearBackground">
                 Quitar fondo
               </v-btn>
-              
+
             </div>
           </div>
-           
+
         </div>
       </div>
     </div>
@@ -100,23 +77,51 @@
 </template>
 
 
-import { defineExpose } from 'vue'
 <script setup>
 import { ref, reactive, watch, nextTick } from 'vue'
+
+// Recibir el valor como prop
+const props = defineProps({
+  valorTexto: String
+})
+
+// Crear ref local
+const textBTxt = ref('')
+
+// Sincronizar el valor recibido con la ref
+watch(
+  () => props.valorTexto,
+  (nuevoValor) => {
+    textBTxt.value = nuevoValor
+  },
+  { immediate: true }
+)
+
 // IDs y textos por defecto
 const defaultTextBoxes = [
-  { id: 'emisor-text', text: 'Emisor', x: 350, y: 40 },
-  { id: 'otorga-text', text: 'Otorga', x: 350, y: 90 },
+  { id: 'emisor-text', text: 'UNIVERSIDAD DE LA SIERRA SUR', x: 350, y: 40 },
+  { id: 'otorga-text', text: 'Otorga la presente constancia a', x: 350, y: 90 },
   { id: 'receptor-text', text: 'Receptor', x: 350, y: 140 },
-  { id: 'body-text', text: 'Cuerpo', x: 350, y: 190 },
-  { id: 'att-text', text: 'Atentamente', x: 350, y: 240 },
+  { id: 'body-text', text: textBTxt.value || 'Cuerpo', x: 350, y: 190 },
+  { id: 'att-text', text: 'Atentamente: Docendo discimus', x: 350, y: 240 },
   { id: 'firma-one', text: 'Firma 1', x: 350, y: 450 },
   { id: 'firma-two', text: 'Firma 2', x: 600, y: 450 },
   { id: 'date-text', text: 'Fecha', x: 350, y: 370 },
   { id: 'verification-text', text: 'Puede validar su constancia en ', x: 350, y: 550 },
-  { id: 'folio-text', text: 'Folio', x: 650, y: 550 },
+  { id: 'folio-text', text: 'Folio(Se genera en automático)', x: 650, y: 550 },
 ]
 
+// Watch para actualizar body-text cuando cambia textBTxt
+watch(
+  textBTxt,
+  (nuevoValor) => {
+    const bodyBox = textBoxes.find(box => box.id === 'body-text')
+    if (bodyBox) {
+      bodyBox.text = nuevoValor || 'Cuerpo'
+      drawCanvas()
+    }
+  }
+)
 const addDefaultTextBoxes = () => {
   textBoxes.splice(0, textBoxes.length)
   for (const box of defaultTextBoxes) {
@@ -221,11 +226,8 @@ const drawCanvas = () => {
     ctx.save();
     ctx.font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
     ctx.textBaseline = 'top';
-    // Si quieres que el texto NO se vea en pantalla pero SÍ en PDF, hazlo condicional:
-    // if (typeof window.__drawForPDF !== 'undefined' && window.__drawForPDF) {
-      ctx.fillStyle = box.color || '#000000';
-      ctx.fillText(box.text, box.x + 10 , box.y + 7);
-    // }
+    ctx.fillStyle = box.color || '#000000';
+    ctx.fillText(box.text, box.x + 10, box.y + 7);
     ctx.restore();
   });
 }
@@ -309,7 +311,6 @@ defineExpose({ getCanvasImage });
 </script>
 
 <style scoped>
-
 .editor {
   background: #f7f7f7;
   font-family: sans-serif;
@@ -331,11 +332,13 @@ defineExpose({ getCanvasImage });
   background: #e0e0e0;
   border-radius: 8px;
 }
+
 .editor::-webkit-scrollbar-thumb {
   background: #7C0A02;
   border-radius: 8px;
   border: 2px solid #e0e0e0;
 }
+
 .editor::-webkit-scrollbar-thumb:hover {
   background: #a11a1a;
 }

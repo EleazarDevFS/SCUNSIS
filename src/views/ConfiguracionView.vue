@@ -10,22 +10,26 @@ export default {
     components: {
         AsideComponent,
         ActiveUser,
-        MyForm,EditPaperMaster
-        },
-    mounted(){
+        MyForm, EditPaperMaster
+    },
+    mounted() {
         document.body.style.background = "#EBE7E7"
     }
 }
 </script>
 <template>
     <div class="configuracion-container">
-        <main>
-             <EditPaperMaster></EditPaperMaster>
-            <button >
-                Hola
-            </button>
-        </main>
-
+        <div class="settings">
+            <h3>Administración de usuarios</h3>
+            <hr>
+        </div>
+        <div class="settings">
+            <h3>Configuraciones por defecto</h3>
+            <hr>
+            <MyForm>
+                
+            </MyForm>
+        </div>
     </div>
 
 
@@ -33,15 +37,18 @@ export default {
 <style scoped>
 .configuracion-container {
     display: flex;
-    flex-wrap: wrap;
-    width:calc(100vw - 100px);
-    height: 100vh;
+    width: calc(100% - 1px);
+    height: calc(100% - 86px);
+    overflow-y: auto;
 }
 
-main {
-    width: calc(100% - 200px);
-    height: calc(100% - 100px);
-    overflow-y: auto;
+.settings {
+    border: 1px solid rgba(0, 0, 0, .5);
+    width: 50%;
+}
+
+.settings h3 {
+    text-align: center;
 }
 
 .header {

@@ -43,7 +43,7 @@ export default {
 }
 
 main {
-    width: calc(100% - 200px);
+    width: calc(100% - 151px);
     height: calc(100% - 90px);
     overflow-y: auto;
 }
