@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, watch } from 'vue'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import EditPaperMaster from './EditPaperMaster.vue'
 const props = defineProps({
@@ -7,51 +7,73 @@ const props = defineProps({
     mensajePlaceholder: String
 })
 
+// Sincronizar fecha seleccionada con el editor
 const editPaperMasterRef = ref(null)
 const pdfUrl = ref(null)
 const mensaje = ref('')
+const receptor = ref('')
+const fechaSeleccionada = ref(''); // Nueva variable reactiva para la fecha
 const cerrarFormulario = () => {
     // Cerrar formulario 
 }
 
 const submitForm = async () => {
-    // 1. Obtener imagen PNG del canvas editado (incluye todos los textos y ediciones)
-    const canvasImage = editPaperMasterRef.value?.getCanvasImage?.()
-    if (!canvasImage) {
-        console.log(canvasImage)
-        alert('Primero edita y carga la hoja maestra en el editor.')
-        return
+    if (!excelData.value.length) {
+        alert('Primero carga un archivo Excel válido.');
+        return;
     }
-
-    // 2. Crear un PDF nuevo con el tamaño del canvas
-    const tempImg = new window.Image();
-    tempImg.src = canvasImage;
-    await new Promise(resolve => { tempImg.onload = resolve; });
-    const width = tempImg.width;
-    const height = tempImg.height;
-
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([width, height]);
-
-    // 3. Insertar imagen del canvas (ya contiene todos los textos y ediciones)
-    const pngImage = await pdfDoc.embedPng(canvasImage);
-    page.drawImage(pngImage, {
-        x: 0,
-        y: 0,
-        width,
-        height
-    });
-
-    // 4. Guardar y descargar
-    const modifiedPdfBytes = await pdfDoc.save();
-    const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'constancia-con-mensaje.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const canvasImage = editPaperMasterRef.value?.getCanvasImage?.();
+    if (!canvasImage) {
+        alert('Primero edita y carga la hoja maestra en el editor.');
+        return;
+    }
+    for (const persona of excelData.value) {
+        // Soporta array de arrays (sin encabezados) y array de objetos (con encabezados)
+        let nombre, primer_apellido, segundo_apellido, grado_academico, grado;
+        if (Array.isArray(persona)) {
+            nombre = persona[0] || '';
+            primer_apellido = persona[1] || '';
+            segundo_apellido = persona[2] || '';
+            grado_academico = persona[3] || '';
+            grado = persona[4] || '';
+        } else {
+            nombre = persona.nombre || '';
+            primer_apellido = persona.primer_apellido || '';
+            segundo_apellido = persona.segundo_apellido || '';
+            grado_academico = persona.grado_academico || '';
+            grado = persona.grado || '';
+        }
+        const nombreCompleto = [nombre, primer_apellido, segundo_apellido].filter(Boolean).join(' ');
+        const mensajePersonalizado = `Por su destacada participación, se otorga la presente constancia a ${grado ? grado + ' ' : ''}${nombreCompleto}.`;
+        receptor.value = nombreCompleto;
+        mensaje.value = mensajePersonalizado;
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const canvasImg = editPaperMasterRef.value?.getCanvasImage?.();
+        if (!canvasImg) continue;
+        const tempImg = new window.Image();
+        tempImg.src = canvasImg;
+        await new Promise(resolve => { tempImg.onload = resolve; });
+        const width = tempImg.width;
+        const height = tempImg.height;
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([width, height]);
+        const pngImage = await pdfDoc.embedPng(canvasImg);
+        page.drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width,
+            height
+        });
+        const modifiedPdfBytes = await pdfDoc.save();
+        const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `constancia-${nombreCompleto.replace(/\s+/g, '_')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
 // Edit Master Page
@@ -69,6 +91,39 @@ function handleFileChange(event) {
     }
 }
 
+// Guardar los datos del Excel
+const excelData = ref([])
+
+// Manejar la carga del Excel y obtener los datos del backend
+async function onExcelChange(event) {
+  const file = event.target.files ? event.target.files[0] : event;
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const response = await fetch('http://localhost:3001/api/upload-excel', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    // Soporta ambos formatos: folios (array de objetos) o data (array de arrays)
+    if (result.folios && Array.isArray(result.folios) && result.folios.length > 0) {
+      excelData.value = result.folios;
+    } else if (result.data && Array.isArray(result.data) && result.data.length > 1) {
+      excelData.value = result.data.slice(1); // omite encabezado si existe
+    } else {
+      excelData.value = [];
+    }
+  } catch (err) {
+    alert('Error procesando el archivo Excel');
+  }
+};
+
+watch(fechaSeleccionada, (nuevaFecha) => {
+  if (editPaperMasterRef.value && editPaperMasterRef.value.selectedDate !== undefined) {
+    editPaperMasterRef.value.selectedDate = nuevaFecha;
+  }
+});
 </script>
 
 <template>
@@ -88,12 +143,7 @@ function handleFileChange(event) {
             <v-file-input label="Archivo Excel" accept=".xlsx" multiple 
             :rules="[value => !!value || 'Porfavor cargue un archivo .xlsx o calc']"
             class="campo-archivo"
-                id="excel-jornadas"></v-file-input>
-        </div>
-
-        <div class="grupo-formulario">
-            <label for="fecha-jornadas">Seleccionar fecha</label>
-            <input type="date" id="fecha-jornadas" class="campo-texto">
+                id="excel-jornadas" @change="onExcelChange"></v-file-input>
         </div>
         <div class="grupo-formulario">
             <label for="mensaje">Mensaje:</label>

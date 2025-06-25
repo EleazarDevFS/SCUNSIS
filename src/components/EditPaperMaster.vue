@@ -36,6 +36,10 @@
       </div>
       <!-- </div> -->
       <div class="sidebar">
+        <div style="margin-bottom: 16px;">
+          <label>Selecciona la fecha:</label>
+          <input type="date" v-model="selectedDate" style="width: 100%; padding: 6px; margin-top: 4px;" />
+        </div>
         <div v-if="selectedBox !== null">
           <label>Editar texto:</label>
           <textarea id="text-edition" v-model="textBoxes[selectedBox].text" @input="drawCanvas"></textarea>
@@ -99,7 +103,7 @@ watch(
 
 // IDs y textos por defecto
 const defaultTextBoxes = [
-  { id: 'emisor-text', text: 'UNIVERSIDAD DE LA SIERRA SUR', x: 350, y: 40 },
+  { id: 'emisor-text', text: 'UNIVERSIDAD DE LA SIERRA SUR', x: 400, y: 40, fontFamily: 'Arial', fontSize: 24, color: '#000', background: 'rgba(255,255,255,0)', align: 'center' },
   { id: 'otorga-text', text: 'Otorga la presente constancia a', x: 350, y: 90 },
   { id: 'receptor-text', text: 'Receptor', x: 350, y: 140 },
   { id: 'body-text', text: textBTxt.value || 'Cuerpo', x: 350, y: 190 },
@@ -108,7 +112,7 @@ const defaultTextBoxes = [
   { id: 'firma-two', text: 'Firma 2', x: 600, y: 450 },
   { id: 'date-text', text: 'Fecha', x: 350, y: 370 },
   { id: 'verification-text', text: 'Puede validar su constancia en ', x: 350, y: 550 },
-  { id: 'folio-text', text: 'Folio(Se genera en automático)', x: 650, y: 550 },
+  { id: 'folio-text', text: 'Folio', x: 650, y: 550 },
 ]
 
 // Watch para actualizar body-text cuando cambia textBTxt
@@ -144,6 +148,24 @@ const textBoxes = reactive([])
 let draggingIndex = null
 let offset = { x: 0, y: 0 }
 const selectedBox = ref(null)
+
+// Fecha reactiva
+const selectedDate = ref('');
+
+// Watch para actualizar date-text cuando cambia selectedDate
+watch(selectedDate, (newDate) => {
+  const dateBox = textBoxes.find(box => box.id === 'date-text');
+  if (dateBox) {
+    // Formato legible: yyyy-mm-dd a dd/mm/yyyy
+    if (newDate) {
+      const [yyyy, mm, dd] = newDate.split('-');
+      dateBox.text = `${dd}/${mm}/${yyyy}`;
+    } else {
+      dateBox.text = 'Fecha';
+    }
+    drawCanvas();
+  }
+});
 
 const clearBackground = (event) => {
   event.preventDefault()
@@ -199,7 +221,89 @@ const onImageChange = (event) => {
   reader.readAsDataURL(file)
 }
 
-// Dibuja la imagen de fondo y todos los textos sobre el canvas
+// Manejar la carga del Excel y autocompletar los campos
+const onExcelChange = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const response = await fetch('http://localhost:3001/api/upload-excel', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    if (result.data && Array.isArray(result.data)) {
+      const headers = result.data[0];
+      const rows = result.data.slice(1);
+      if (rows.length > 0) {
+        const persona = rows[0];
+        // Enviar persona al backend para registrar y obtener folio
+        const folioRes = await fetch('http://localhost:3001/api/registrar-receptor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre: persona[0],
+            primer_apellido: persona[1],
+            segundo_apellido: persona[2],
+            telefono: persona[3] || '',
+            email: persona[4] || '',
+            grado_academico: persona[5] || ''
+          })
+        });
+        const folioData = await folioRes.json();
+        // Actualiza el campo receptor y folio
+        const receptorBox = textBoxes.find(box => box.id === 'receptor-text');
+        if (receptorBox) receptorBox.text = `${persona[0]} ${persona[1]} ${persona[2]}`;
+        const folioBox = textBoxes.find(box => box.id === 'folio-text');
+        if (folioBox && folioData.folio) folioBox.text = `Folio: ${folioData.folio}`;
+        drawCanvas();
+      }
+    }
+  } catch (err) {
+    alert('Error procesando el archivo Excel o registrando receptor');
+  }
+};
+
+// Utilidad para calcular el ancho real de la caja de texto HTML
+function getTextBoxWidth(box, index) {
+  // Busca el elemento HTML de la caja
+  const el = document.querySelectorAll('.text-box')[index];
+  if (el) {
+    return el.offsetWidth;
+  }
+  // Fallback
+  return 400;
+}
+
+// Utilidad para dibujar texto multilínea con límites y estilos
+function drawMultilineText(ctx, text, x, y, maxWidth, lineHeight, font, color, opacity, maxY) {
+  ctx.save();
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.globalAlpha = opacity;
+  ctx.textBaseline = 'top';
+  const words = text.split(' ');
+  let line = '';
+  let currentY = y;
+  for (let n = 0; n < words.length; n++) {
+    let testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && n > 0) {
+      if (maxY && currentY + lineHeight > maxY) break;
+      ctx.fillText(line, x, currentY);
+      line = words[n] + ' ';
+      currentY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  if (!maxY || currentY + lineHeight <= maxY) {
+    ctx.fillText(line, x, currentY);
+  }
+  ctx.restore();
+}
+
 const drawCanvas = () => {
   const ctx = canvas.value.getContext('2d');
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
@@ -208,10 +312,11 @@ const drawCanvas = () => {
     ctx.drawImage(image.value, 0, 0, canvas.value.width, canvas.value.height);
   }
   // Dibuja cada caja de texto
-  textBoxes.forEach(box => {
+  textBoxes.forEach((box, index) => {
     // Fondo de la caja de texto (si no es transparente)
     if (box.background && box.background !== 'rgba(255,255,255,0)') {
       ctx.save();
+      ctx.globalAlpha = 0.2;
       ctx.fillStyle = box.background;
       ctx.font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
       const metrics = ctx.measureText(box.text);
@@ -222,12 +327,21 @@ const drawCanvas = () => {
       ctx.fillRect(box.x - paddingX, box.y - paddingY, textWidth + 2 * paddingX, textHeight + 2 * paddingY);
       ctx.restore();
     }
-    // Texto: solo dibujar en canvas si es para PDF o si quieres mostrarlo en pantalla
     ctx.save();
-    ctx.font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
-    ctx.textBaseline = 'top';
-    ctx.fillStyle = box.color || '#000000';
-    ctx.fillText(box.text, box.x + 10, box.y + 7);
+    const font = `${box.fontSize || 18}px ${box.fontFamily || 'Arial'}`;
+    const color = box.color || '#000000';
+    const opacity = 1;
+    // Calcula el ancho real de la caja HTML para que coincida
+    const maxWidth = getTextBoxWidth(box, index) - 16; // padding
+    const lineHeight = (box.fontSize || 18) + 6;
+    const maxY = canvas.value.height - 10;
+    if (box.align === 'center') {
+      ctx.textAlign = 'center';
+      drawMultilineText(ctx, box.text, box.x, box.y + 7, maxWidth, lineHeight, font, color, opacity, maxY);
+    } else {
+      ctx.textAlign = 'left';
+      drawMultilineText(ctx, box.text, box.x + 10, box.y + 7, maxWidth, lineHeight, font, color, opacity, maxY);
+    }
     ctx.restore();
   });
 }
@@ -292,9 +406,21 @@ const onDrag = (event) => {
   if (draggingIndex === null) return
   if (!textBoxes[draggingIndex]) return
   const containerRect = canvasContainer.value.getBoundingClientRect()
-  // El mouse está en clientX/clientY, queremos que la esquina superior izquierda de la caja siga el mouse menos el offset
-  textBoxes[draggingIndex].x = event.clientX - containerRect.left - offset.x
-  textBoxes[draggingIndex].y = event.clientY - containerRect.top - offset.y
+  const box = textBoxes[draggingIndex];
+  // Limitar el área de movimiento al canvas
+  const canvasW = canvas.value.width;
+  const canvasH = canvas.value.height;
+  const maxWidth = 400; // Debe coincidir con el usado en drawMultilineText
+  const lineHeight = (box.fontSize || 18) + 6;
+  // Calcular altura máxima (3 líneas por ejemplo, puedes ajustar)
+  const maxHeight = lineHeight * 3;
+  let newX = event.clientX - containerRect.left - offset.x;
+  let newY = event.clientY - containerRect.top - offset.y;
+  // Limitar para que no se salga del canvas
+  newX = Math.max(0, Math.min(newX, canvasW - maxWidth));
+  newY = Math.max(0, Math.min(newY, canvasH - maxHeight));
+  box.x = newX;
+  box.y = newY;
   drawCanvas() // Redibuja el canvas mientras se arrastra
 }
 function getCanvasImage() {

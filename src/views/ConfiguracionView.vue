@@ -26,9 +26,7 @@ export default {
         <div class="settings">
             <h3>Configuraciones por defecto</h3>
             <hr>
-            <MyForm>
-                
-            </MyForm>
+            
         </div>
     </div>
 

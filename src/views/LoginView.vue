@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
 import Logo from '../components/Logo.vue'
@@ -7,25 +7,45 @@ import Logo from '../components/Logo.vue'
 const toast = useToast()
 const router = useRouter()
 
+const username = ref('')
+const password = ref('')
+
 onMounted(() => {
   document.body.style.background = 'url("public/img/image.png") no-repeat center center fixed'
   document.body.style.backgroundSize = 'cover'
 })
 
-function login() {
-  toast.success('¡Iniciaste sesión exitosamente!')
-  setTimeout(() => {
-    router.push('/inicio')
-  }, 300)
+async function login() {
+  if (!username.value || !password.value) {
+    toast.error('Por favor ingresa usuario y contraseña')
+    return
+  }
+  try {
+    const response = await fetch('http://localhost:3001/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username.value, password: password.value })
+    })
+    const data = await response.json()
+    if (response.ok && data.success) {
+      toast.success('¡Iniciaste sesión exitosamente!')
+      setTimeout(() => {
+        router.push('/inicio')
+      }, 300)
+    } else {
+      toast.error(data.message || 'Error al iniciar sesión')
+    }
+  } catch (err) {
+    toast.error('No se pudo conectar al servidor')
+  }
 }
 </script>
 
 <template>
-  
   <form class="login" id="loginsc" @submit.prevent="login">
     <Logo class="logotipo" />
-    <input type="text" class="inputs-txt sub-log" placeholder="Usuario" />
-    <input type="password" class="inputs-txt sub-log" placeholder="Contraseña" />
+    <input v-model="username" type="text" class="inputs-txt sub-log" placeholder="Usuario" />
+    <input v-model="password" type="password" class="inputs-txt sub-log" placeholder="Contraseña" />
     <v-btn color="#7C0A02" variant="outlined" @click="login">
       Iniciar sesión
     </v-btn>
